@@ -1,0 +1,58 @@
+﻿@page "/"
+@using FlixSorter.Data
+@inject APIService ApiService
+
+
+<EditForm Model="@search" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="name" @bind-Value="search.Term" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+@if (Results != null)
+{
+    foreach (var item in Results.Search)
+    {
+<p>@item.Title</p>
+<p>@item.Year</p>
+    }
+}
+
+
+
+
+@code {
+    public Item item { get; set; }
+    public SearchResults Results { get; set; }
+    public Search search = new Search();
+    private EditContext editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(search);
+    }
+
+    private async Task HandleSubmit()
+    {
+        var isValid = editContext.Validate();
+
+        if (isValid)
+        {
+            var response = await ApiService.GetMediaByTitle(search.Term);
+            Results = response;
+        }
+        else
+        {
+            Console.WriteLine("Error");
+        }
+    }
+
+    public class Search
+    {
+        public string Term { get; set; }
+    }
+}
