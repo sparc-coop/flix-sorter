@@ -1,0 +1,34 @@
+﻿@page "/lists"
+
+<div><h1>My Lists</h1></div>
+
+
+@if (DisplayList != null)
+{
+<div class="display-grid">
+    @foreach (var thing in DisplayList.All)
+    {
+        <img src="@thing.Poster" width="100" height="200" style="object-fit: cover;" />
+    }
+</div>
+}
+  
+
+    <button @onclick="@(()=>UpdateFilter("movie"))">Movies Only</button>
+
+    @code {
+        [Parameter]
+        public List DisplayList { get; set; }
+public bool Filter { get; set; } = true;
+
+    private void UpdateFilter(string filter)
+    {
+        if (filter == "movie")
+        {
+            DisplayList.All = DisplayList.All.Where(x => x.Type == filter).ToList();
+        }
+
+        StateHasChanged();
+
+    }
+    }

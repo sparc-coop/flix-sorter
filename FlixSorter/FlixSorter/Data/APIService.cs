@@ -11,7 +11,7 @@ namespace FlixSorter.Data
 
     public class SearchResults
     {
-        public List<Item> Search { get; set; }
+        public List<MovieTV> Search { get; set; }
     }
     public class Item
     {

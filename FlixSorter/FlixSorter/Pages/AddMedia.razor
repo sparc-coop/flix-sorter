@@ -1,0 +1,73 @@
+﻿@page "/add"
+@using FlixSorter.Data
+@inject APIService ApiService
+
+
+<EditForm Model="@search" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="name" @bind-Value="search.Term" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+@if (Results != null)
+{
+    foreach (var item in Results.Search)
+    {
+    <p @onclick="@(()=>AddToList(@item))">@item.Title (@item.Year)</p>
+    }
+}
+
+<Lists DisplayList="@List" />
+
+
+
+
+@code {
+    public Item item { get; set; }
+    public SearchResults Results { get; set; }
+    public Search search = new Search();
+    private EditContext editContext;
+    public List List { get; set; } = new List();
+    public MovieTV Selected { get; set; }
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(search);
+        List.All = new List<MovieTV>();
+    }
+
+    private async Task HandleSubmit()
+    {
+        var isValid = editContext.Validate();
+
+        if (isValid)
+        {
+            var response = await ApiService.GetMediaByTitle(search.Term);
+            Results = response;
+        }
+        else
+        {
+            Console.WriteLine("Error");
+        }
+    }
+
+    public class Search
+    {
+        public string Term { get; set; }
+    }
+
+    private void AddToList(MovieTV clicked)
+    {
+        Selected = clicked;
+        if (!List.All.Contains(Selected))
+        {
+            List.All.Add(Selected);
+            StateHasChanged();
+        }
+
+    }
+}
