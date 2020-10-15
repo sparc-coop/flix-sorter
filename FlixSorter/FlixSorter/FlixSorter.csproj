@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Styles\List.scss" />
+    <Content Include="Styles\main.css" />
+    <Content Include="Styles\main.min.css" />
+    <Content Include="Styles\Main.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
     <PackageReference Include="BuildWebCompiler" Version="1.12.394" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>

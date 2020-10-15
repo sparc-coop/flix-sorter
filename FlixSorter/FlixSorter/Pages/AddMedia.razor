@@ -1,6 +1,8 @@
 ﻿@page "/add"
 @using FlixSorter.Data
+@using Newtonsoft.Json;
 @inject APIService ApiService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 
 
 <EditForm Model="@search" OnValidSubmit="@HandleSubmit">
@@ -12,18 +14,29 @@
     <button type="submit">Submit</button>
 </EditForm>
 
-
 @if (Results != null)
 {
     foreach (var item in Results.Search)
     {
-    <p @onclick="@(()=>AddToList(@item))">@item.Title (@item.Year)</p>
+        <div class="search-item">
+            <img src="@item.Poster" width="50" />
+            <div>
+                <p @onclick="@(()=>AddToList(@item))">@item.Title (@item.Year)</p>
+                <select @bind="@item.Streaming">
+                    <option>Select A Service</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="Hulu">Hulu</option>
+                </select>
+                @*<label>Netflix<input type="checkbox" @bind="@item.Netflix" /></label>
+                    <label>Hulu<input type="checkbox" @bind="@item.Hulu" /></label>*@
+            </div>
+        </div>
     }
 }
 
 <Lists DisplayList="@List" />
 
-
+<button @onclick="@(async ()=> await SaveToLocalStorage())">Save</button>
 
 
 @code {
@@ -34,10 +47,18 @@
     public List List { get; set; } = new List();
     public MovieTV Selected { get; set; }
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         editContext = new EditContext(search);
         List.All = new List<MovieTV>();
+
+        var startList = await localStorage.GetItemAsync<string>("List");
+        var localList = JsonConvert.DeserializeObject<List<MovieTV>>(startList);
+
+        if (localList != null)
+        {
+            List.All = localList;
+        }
     }
 
     private async Task HandleSubmit()
@@ -69,5 +90,12 @@
             StateHasChanged();
         }
 
+    }
+
+    private async Task SaveToLocalStorage()
+    {
+
+        string json = JsonConvert.SerializeObject(List.All);
+        await localStorage.SetItemAsync("List", json);
     }
 }

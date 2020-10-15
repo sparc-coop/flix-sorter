@@ -23,5 +23,8 @@ namespace FlixSorter.Data
         public string Rated { get; set; }
         public string Genres { get; set; }
         public string Languages { get; set; }
+        public bool Netflix { get; set; }
+        public bool Hulu { get; set; }
+        public string Streaming { get; set; }
     }
 }

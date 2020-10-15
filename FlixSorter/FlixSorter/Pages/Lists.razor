@@ -5,30 +5,39 @@
 
 @if (DisplayList != null)
 {
-<div class="display-grid">
+<div class="media-grid">
     @foreach (var thing in DisplayList.All)
     {
-        <img src="@thing.Poster" width="100" height="200" style="object-fit: cover;" />
+    <div class="grid-item">
+        <img src="@thing.Poster" style="object-fit: cover;" />
+        <p>@thing.Streaming</p>
+    </div>
     }
 </div>
 }
   
 
     <button @onclick="@(()=>UpdateFilter("movie"))">Movies Only</button>
+    <button @onclick="@(()=>UpdateFilter("netflix"))">Netflix</button>
 
     @code {
         [Parameter]
         public List DisplayList { get; set; }
-public bool Filter { get; set; } = true;
+        public bool Filter { get; set; } = true;
 
-    private void UpdateFilter(string filter)
-    {
-        if (filter == "movie")
+        private void UpdateFilter(string filter)
         {
-            DisplayList.All = DisplayList.All.Where(x => x.Type == filter).ToList();
+            if (filter == "movie")
+            {
+                DisplayList.All = DisplayList.All.Where(x => x.Type == filter).ToList();
+            }
+
+            if (filter == "netflix")
+            {
+                DisplayList.All = DisplayList.All.Where(x => x.Netflix == true).ToList();
+            }
+
+            StateHasChanged();
+
         }
-
-        StateHasChanged();
-
-    }
     }
