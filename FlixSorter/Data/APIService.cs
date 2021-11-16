@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace FlixSorter.Data
@@ -21,11 +22,16 @@ namespace FlixSorter.Data
     public class APIService
     {
         HttpClient Http = new HttpClient();
+        private readonly IConfiguration _config;
+
+        public APIService(IConfiguration config)
+        {
+            _config = config;
+        }
 
         public async Task<SearchResults> GetMediaByTitle(string search)
         {
-
-            string key = "";
+            string key = _config["OMDBAPI:Key"];
             string baseUrl = "http://www.omdbapi.com/?apikey=" + key;
             string apiUrl = baseUrl + "&s=" + search;
             var response = await Http.GetAsync(apiUrl);
